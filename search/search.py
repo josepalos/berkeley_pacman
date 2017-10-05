@@ -96,6 +96,7 @@ def breadthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
     initial_node = node.Node(problem.getStartState())
     fringe = [initial_node]
+    generated = dict()
 
     while True:
         if not fringe:
@@ -109,9 +110,13 @@ def breadthFirstSearch(problem):
             # TODO: return n.path()
             sys.exit(0)
 
+        generated[n.state] = []
+
         for (successor, action, stepCost) in problem.getSuccessors(n.state):
-            successor_node = node.Node(successor, n, action, stepCost)
-            fringe.append(successor_node)
+            if successor not in generated:
+                successor_node = node.Node(successor, n, action, stepCost)
+                fringe.append(successor_node)
+                generated[successor] = []  # state not in fringe --> state in generated
 
 
     util.raiseNotDefined()
