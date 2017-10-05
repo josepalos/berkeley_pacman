@@ -10,9 +10,13 @@ class Node:
                .format(self.state, self.parent, self.action, self.cost)
     
     def path(self):
-        if self.parent is None:
-            return []
-        return self.parent.path() + [self.action]
+        n = self
+        solution_reversed = []
+        while n.parent is not None:
+            solution_reversed.append(n.action)
+            n = n.parent
+        solution_reversed.reverse()
+        return solution_reversed
 
 if __name__ == '__main__':
     n1 = Node('n1', None, 'South')
