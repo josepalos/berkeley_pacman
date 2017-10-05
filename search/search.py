@@ -107,7 +107,7 @@ def breadthFirstSearch(problem):
 
         if problem.isGoalState(n.state):
             print "Solution."
-            # TODO: return n.path()
+            return n.path()
             sys.exit(0)
 
         generated[n.state] = []
