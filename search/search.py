@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -96,10 +96,11 @@ def breadthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
     return _genericAlgorithm(util.Queue, problem)
 
-def _genericAlgorithm(fringe_class, problem):
+def _genericAlgorithm(fringe_class, problem, fringe_push=lambda fringe, node: fringe.push(node), test_goal_on_generated=True):
     initial_node = node.Node(problem.getStartState())
     fringe = fringe_class()
-    fringe.push(initial_node)
+    # fringe.push(initial_node)
+    fringe_push(fringe, initial_node)
     generated = dict()
 
     while True:
@@ -109,52 +110,27 @@ def _genericAlgorithm(fringe_class, problem):
 
         n = fringe.pop()
 
-        if problem.isGoalState(n.state):
-            return n.path()
-
-        generated[n.state] = []
-
-        for (successor, action, stepCost) in problem.getSuccessors(n.state):
-            if successor not in generated:
-                successor_node = node.Node(successor, n, action, stepCost)
-                if problem.isGoalState(successor_node.state):
-                    return successor_node.path()
-                fringe.push(successor_node)
-                generated[successor_node.state] = []  # state not in fringe --> state in generated
-
-def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    # TODO: update generic and return _genericAlgorithm(util.PriorityQueue, problem)
-    # Problem is: push uses extra parameters. Create function for adding nodes instead of push directly
-    fringe_class = util.PriorityQueue
-
-    initial_node = node.Node(problem.getStartState())
-    fringe = fringe_class()
-    fringe.push(initial_node, initial_node.cost)
-    generated = dict()
-
-    while True:
-        if fringe.isEmpty():
-            print "No solution."
-            sys.exit(-1)
-
-        n = fringe.pop()
-        if n.state in generated:
+        if n.state in generated and generated[n.state]['expanded']:
             continue
 
         if problem.isGoalState(n.state):
             return n.path()
 
-        generated[n.state] = []
+        generated[n.state] = {'node': n, 'expanded': True}
 
         for (successor, action, stepCost) in problem.getSuccessors(n.state):
             if successor not in generated:
-                successor_node = node.Node(successor, n, action, n.cost + stepCost)
-                fringe.push(successor_node, successor_node.cost)
-                generated[successor_node.state] = []  # state not in fringe --> state in generated
+                successor_node = node.Node(successor, n, action, stepCost)
+                if test_goal_on_generated and problem.isGoalState(successor_node.state):
+                    return successor_node.path()
+                fringe_push(fringe, successor_node)
+                # fringe.push(successor_node)
+                generated[successor_node.state] = {'node': successor_node, 'expanded': False}  # state not in fringe --> state in generated
 
-
+def uniformCostSearch(problem):
+    """Search the node of least total cost first."""
+    "*** YOUR CODE HERE ***"
+    return _genericAlgorithm(util.PriorityQueue, problem, fringe_push=lambda fringe, node: fringe.push(node, node.cost), test_goal_on_generated=False)
 
 def nullHeuristic(state, problem=None):
     """
