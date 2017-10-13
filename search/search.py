@@ -92,10 +92,14 @@ def depthFirstSearch(problem):
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
+    return _genericAlgorithm(util.Queue, problem)
+
+def _genericAlgorithm(fringe_class, problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     initial_node = node.Node(problem.getStartState())
-    fringe = [initial_node]
+    fringe = fringe_class()
+    fringe.push(initial_node)
     generated = dict()
 
     while True:
@@ -103,7 +107,7 @@ def breadthFirstSearch(problem):
             print "No solution."
             sys.exit(-1)
 
-        n = fringe.pop(0)
+        n = fringe.pop()
 
         if problem.isGoalState(n.state):
             return n.path()
@@ -115,7 +119,7 @@ def breadthFirstSearch(problem):
                 successor_node = node.Node(successor, n, action, stepCost)
                 if problem.isGoalState(successor_node.state):
                     return successor_node.path()
-                fringe.append(successor_node)
+                fringe.push(successor_node)
                 generated[successor_node.state] = []  # state not in fringe --> state in generated
 
 
