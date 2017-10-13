@@ -103,7 +103,7 @@ def _genericAlgorithm(fringe_class, problem):
     generated = dict()
 
     while True:
-        if not fringe:
+        if fringe.isEmpty():
             print "No solution."
             sys.exit(-1)
 
@@ -135,7 +135,7 @@ def uniformCostSearch(problem):
     generated = dict()
 
     while True:
-        if not fringe:
+        if fringe.isEmpty():
             print "No solution."
             sys.exit(-1)
 
