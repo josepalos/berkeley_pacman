@@ -89,15 +89,14 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    # util.raiseNotDefined()
     return _genericAlgorithm(util.Stack, problem)
 
 def breadthFirstSearch(problem):
+    """Search the shallowest nodes in the search tree first."""
+    "*** YOUR CODE HERE ***"
     return _genericAlgorithm(util.Queue, problem)
 
 def _genericAlgorithm(fringe_class, problem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
     initial_node = node.Node(problem.getStartState())
     fringe = fringe_class()
     fringe.push(initial_node)
@@ -123,13 +122,37 @@ def _genericAlgorithm(fringe_class, problem):
                 fringe.push(successor_node)
                 generated[successor_node.state] = []  # state not in fringe --> state in generated
 
-
-    util.raiseNotDefined()
-
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # TODO: update generic and return _genericAlgorithm(util.PriorityQueue, problem)
+    # Problem is: push uses extra parameters. Create function for adding nodes instead of push directly
+    fringe_class = util.PriorityQueue
+
+    initial_node = node.Node(problem.getStartState())
+    fringe = fringe_class()
+    fringe.push(initial_node, initial_node.cost)
+    generated = dict()
+
+    while True:
+        if not fringe:
+            print "No solution."
+            sys.exit(-1)
+
+        n = fringe.pop()
+
+        if problem.isGoalState(n.state):
+            return n.path()
+
+        generated[n.state] = []
+
+        for (successor, action, stepCost) in problem.getSuccessors(n.state):
+            if successor not in generated:
+                successor_node = node.Node(successor, n, action, stepCost)
+                fringe.push(successor_node, initial_node.cost)
+                generated[successor_node.state] = []  # state not in fringe --> state in generated
+
+
 
 def nullHeuristic(state, problem=None):
     """
