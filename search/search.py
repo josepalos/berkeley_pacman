@@ -101,22 +101,22 @@ def breadthFirstSearch(problem):
     while True:
         if not fringe:
             print "No solution."
-            sys.exit(1)
+            sys.exit(-1)
 
         n = fringe.pop(0)
 
         if problem.isGoalState(n.state):
-            print "Solution."
             return n.path()
-            sys.exit(0)
 
         generated[n.state] = []
 
         for (successor, action, stepCost) in problem.getSuccessors(n.state):
             if successor not in generated:
                 successor_node = node.Node(successor, n, action, stepCost)
+                if problem.isGoalState(successor_node.state):
+                    return successor_node.path()
                 fringe.append(successor_node)
-                generated[successor] = []  # state not in fringe --> state in generated
+                generated[successor_node.state] = []  # state not in fringe --> state in generated
 
 
     util.raiseNotDefined()
