@@ -140,6 +140,8 @@ def uniformCostSearch(problem):
             sys.exit(-1)
 
         n = fringe.pop()
+        if n.state in generated:
+            continue
 
         if problem.isGoalState(n.state):
             return n.path()
