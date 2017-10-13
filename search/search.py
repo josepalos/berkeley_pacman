@@ -151,7 +151,7 @@ def uniformCostSearch(problem):
         for (successor, action, stepCost) in problem.getSuccessors(n.state):
             if successor not in generated:
                 successor_node = node.Node(successor, n, action, n.cost + stepCost)
-                fringe.push(successor_node, initial_node.cost)
+                fringe.push(successor_node, successor_node.cost)
                 generated[successor_node.state] = []  # state not in fringe --> state in generated
 
 
