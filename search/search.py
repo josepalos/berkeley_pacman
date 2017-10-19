@@ -21,6 +21,7 @@ import util
 import node
 import sys
 
+
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -72,7 +73,8 @@ def tinyMazeSearch(problem):
     from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
+
 
 def depthFirstSearch(problem):
     """
@@ -91,10 +93,12 @@ def depthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
     return _genericAlgorithm(util.Stack, problem)
 
+
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     return _genericAlgorithm(util.Queue, problem)
+
 
 def _genericAlgorithm(fringe_class, problem, fringe_push=lambda fringe, node: fringe.push(node), test_goal_on_generated=True):
     initial_node = node.Node(problem.getStartState())
@@ -127,10 +131,12 @@ def _genericAlgorithm(fringe_class, problem, fringe_push=lambda fringe, node: fr
                 # fringe.push(successor_node)
                 generated[successor_node.state] = {'node': successor_node, 'expanded': False}  # state not in fringe --> state in generated
 
+
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     return _genericAlgorithm(util.PriorityQueue, problem, fringe_push=lambda fringe, node: fringe.push(node, node.cost), test_goal_on_generated=False)
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -138,6 +144,7 @@ def nullHeuristic(state, problem=None):
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
     return 0
+
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
