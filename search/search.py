@@ -119,7 +119,7 @@ def _genericAlgorithm(fringe_class, problem, fringe_push=lambda fringe, node: fr
         generated[n.state] = {'node': n, 'expanded': True}
 
         for (successor, action, stepCost) in problem.getSuccessors(n.state):
-            if successor not in generated:
+            if successor not in generated or generated[successor]['node'].cost > n.cost + stepCost:
                 successor_node = node.Node(successor, n, action, n.cost + stepCost)
                 if test_goal_on_generated and problem.isGoalState(successor_node.state):
                     return successor_node.path()
