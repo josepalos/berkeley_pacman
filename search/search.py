@@ -105,7 +105,7 @@ def _genericAlgorithm(fringe_class, problem, fringe_push=lambda fringe, node: fr
     fringe = fringe_class()
     # fringe.push(initial_node)
     fringe_push(fringe, initial_node)
-    generated = {problem.getStartState(): {'node': initial_node, 'expanded': False}}
+    generated = {problem.getStartState(): [initial_node, False]}
 
     while True:
         if fringe.isEmpty():
@@ -114,22 +114,22 @@ def _genericAlgorithm(fringe_class, problem, fringe_push=lambda fringe, node: fr
 
         n = fringe.pop()
 
-        if generated[n.state]['expanded']:
+        if generated[n.state][1]:
             continue
 
         if problem.isGoalState(n.state):
             return n.path()
 
-        generated[n.state] = {'node': n, 'expanded': True}
+        generated[n.state] = [n, True]
 
         for (successor, action, stepCost) in problem.getSuccessors(n.state):
-            if successor not in generated or generated[successor]['node'].cost > n.cost + stepCost:
+            if successor not in generated or generated[successor][0].cost > n.cost + stepCost:
                 successor_node = node.Node(successor, n, action, n.cost + stepCost)
                 if test_goal_on_generated and problem.isGoalState(successor_node.state):
                     return successor_node.path()
                 fringe_push(fringe, successor_node)
                 # fringe.push(successor_node)
-                generated[successor_node.state] = {'node': successor_node, 'expanded': False}  # state not in fringe --> state in generated
+                generated[successor_node.state] = [successor_node, False]  # state not in fringe --> state in generated
 
 
 def uniformCostSearch(problem):
