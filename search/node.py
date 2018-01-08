@@ -6,8 +6,13 @@ class Node:
         self.cost = cost
 
     def __str__(self):
-        return '--Node {0}--\n\tParent: {1}\n\tAction: {2}\n\tCost: {3}' \
-               .format(self.state, self.parent, self.action, self.cost)
+        return self._str_indented()
+
+    def _str_indented(self, indent_level=0):
+        indentation = '  ' * indent_level
+        parent_indented = self.parent._str_indented(indent_level + 1) if self.parent is not None else '    --None--'
+        return '{0}--Node {1}--\n{0}  Parent:{{\n{0}{2}\n{0}  }}\n{0}  Action: {3}\n{0}  Cost: {4}' \
+                .format(indentation, self.state, parent_indented, self.action, self.cost)
     
     def path(self):
         n = self
