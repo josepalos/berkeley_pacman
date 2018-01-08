@@ -288,6 +288,35 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+        height = self.walls.height
+        width = self.walls.width
+        self.exits_map = [[-1] * width for _ in range(height)]
+        for x in range(0, width):
+            for y in range(0, height):
+                if self.walls[x][y]:
+                    self.exits_map[y][x] = 0
+                    continue
+                up = (x, y-1)
+                down = (x, y+1)
+                left = (x-1, y)
+                right = (x+1, y)
+                exits = [up, down, left, right]
+                exits_count = 0
+                for i in range(0, len(exits)):
+                    (_x, _y) = exits[i]
+                    try:
+                        if not self.walls[_x][_y]:
+                            exits_count = exits_count+1
+                    except:
+                        pass
+                self.exits_map[y][x] = exits_count
+                if exits_count == 1:
+                    print "Count 1 on {}".format((x,y))
+
+        self.exits_map.reverse()
+        for line in self.exits_map:
+            print ''.join([str(i) for i in line])
+        self.exits_map.reverse()
 
     def getStartState(self):
         """
@@ -372,6 +401,8 @@ def cornersHeuristic(state, problem):
     "*** YOUR CODE HERE ***"
     corners = state[1]
     statex, statey = state[0]
+    if state[0] not in problem.corners and problem.exits_map[statey][statex] == 1:
+        return 100000000000000000000000
     distance = lambda x,y: abs(statex - x) + abs(statey - y)
     corners_dist = [(corner, distance(*corner)) for corner in corners]
     corners_dist.sort(lambda (_a,a),(_b,b): cmp(a,b))
