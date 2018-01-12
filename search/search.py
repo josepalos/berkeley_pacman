@@ -21,6 +21,7 @@ import util
 import node
 import sys
 
+
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -72,7 +73,8 @@ def tinyMazeSearch(problem):
     from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
+
 
 def depthFirstSearch(problem):
     """
@@ -91,15 +93,17 @@ def depthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
     return _genericAlgorithm(util.Stack(), problem)
 
+
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     return _genericAlgorithm(util.Queue(), problem)
 
+
 def _genericAlgorithm(fringe, problem, test_goal_on_generated=True):
     initial_node = node.Node(problem.getStartState())
     fringe.push(initial_node)
-    generated = {problem.getStartState(): {'node': initial_node, 'expanded': False}}
+    generated = {problem.getStartState(): [initial_node, False]}
 
     while True:
         if fringe.isEmpty():
@@ -108,26 +112,28 @@ def _genericAlgorithm(fringe, problem, test_goal_on_generated=True):
 
         n = fringe.pop()
 
-        if generated[n.state]['expanded']:
+        if generated[n.state][1]:
             continue
 
         if problem.isGoalState(n.state):
             return n.path()
 
-        generated[n.state] = {'node': n, 'expanded': True}
+        generated[n.state] = [n, True]
 
         for (successor, action, stepCost) in problem.getSuccessors(n.state):
-            if successor not in generated or generated[successor]['node'].cost > n.cost + stepCost:
+            if successor not in generated or generated[successor][0].cost > n.cost + stepCost:
                 successor_node = node.Node(successor, n, action, n.cost + stepCost)
                 if test_goal_on_generated and problem.isGoalState(successor_node.state):
                     return successor_node.path()
                 fringe.push(successor_node)
-                generated[successor_node.state] = {'node': successor_node, 'expanded': False}  # state not in fringe --> state in generated
+                generated[successor_node.state] = [successor_node, False]  # state not in fringe --> state in generated
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    return _genericAlgorithm(util.PriorityQueueWithFunction(lambda node: node.cost), problem, test_goal_on_generated=False)
+    # As default heuristic is nullHeuristic that adds 0 to the cost, we can use it.
+    return aStarSearch(problem)
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -136,10 +142,9 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return _genericAlgorithm(util.PriorityQueueWithFunction(lambda node: node.cost + heuristic(node.state, problem)), problem, test_goal_on_generated=False)
 
 
 # Abbreviations
