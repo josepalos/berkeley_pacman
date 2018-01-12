@@ -89,18 +89,16 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    return _genericAlgorithm(util.Stack, problem)
+    return _genericAlgorithm(util.Stack(), problem)
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    return _genericAlgorithm(util.Queue, problem)
+    return _genericAlgorithm(util.Queue(), problem)
 
-def _genericAlgorithm(fringe_class, problem, fringe_push=lambda fringe, node: fringe.push(node), test_goal_on_generated=True):
+def _genericAlgorithm(fringe, problem, test_goal_on_generated=True):
     initial_node = node.Node(problem.getStartState())
-    fringe = fringe_class()
-    # fringe.push(initial_node)
-    fringe_push(fringe, initial_node)
+    fringe.push(initial_node)
     generated = {problem.getStartState(): {'node': initial_node, 'expanded': False}}
 
     while True:
@@ -123,14 +121,13 @@ def _genericAlgorithm(fringe_class, problem, fringe_push=lambda fringe, node: fr
                 successor_node = node.Node(successor, n, action, n.cost + stepCost)
                 if test_goal_on_generated and problem.isGoalState(successor_node.state):
                     return successor_node.path()
-                fringe_push(fringe, successor_node)
-                # fringe.push(successor_node)
+                fringe.push(successor_node)
                 generated[successor_node.state] = {'node': successor_node, 'expanded': False}  # state not in fringe --> state in generated
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    return _genericAlgorithm(util.PriorityQueue, problem, fringe_push=lambda fringe, node: fringe.push(node, node.cost), test_goal_on_generated=False)
+    return _genericAlgorithm(util.PriorityQueueWithFunction(lambda node: node.cost), problem, test_goal_on_generated=False)
 
 def nullHeuristic(state, problem=None):
     """
