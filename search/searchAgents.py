@@ -288,6 +288,13 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+
+        # Identify dead-ends in the map. The heuristic will use this information
+        # to return a high cost to avoid trying to expand those nodes.
+        # Although now we only iterate once, we could iterate multiple times
+        # considering in the next iteration those dead-ends as walls to remove
+        # more cells.
+
         height = self.walls.height
         width = self.walls.width
         self.exits_map = [[-1] * width for _ in range(height)]
@@ -311,12 +318,13 @@ class CornersProblem(search.SearchProblem):
                         pass
                 self.exits_map[y][x] = exits_count
                 if exits_count == 1:
-                    print "Count 1 on {}".format((x,y))
+                    print "Dead end found at cell {}".format((x,y))
 
-        self.exits_map.reverse()
-        for line in self.exits_map:
-            print ''.join([str(i) for i in line])
-        self.exits_map.reverse()
+        # Uncomment following lines to print the number of exits for each cell.
+        # self.exits_map.reverse()
+        # for line in self.exits_map:
+        #     print ''.join([str(i) for i in line])
+        # self.exits_map.reverse()
 
     def getStartState(self):
         """
