@@ -5,8 +5,7 @@
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
 #
-# Attribution Information: The Pacman AI projects were developed at UC
-# Berkeley.
+# Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # Student side autograding was added by Brad Miller, Nick Hay, and
@@ -25,9 +24,8 @@ import sys
 
 class SearchProblem:
     """
-    This class outlines the structure of a search problem, but doesn't
-    implement any of the methods (in object-oriented terminology: an abstract
-    class).
+    This class outlines the structure of a search problem, but doesn't implement
+    any of the methods (in object-oriented terminology: an abstract class).
 
     You do not need to change anything in this class, ever.
     """
@@ -93,26 +91,18 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    return _genericAlgorithm(util.Stack, problem)
+    return _genericAlgorithm(util.Stack(), problem)
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    return _genericAlgorithm(util.Queue, problem)
+    return _genericAlgorithm(util.Queue(), problem)
 
 
-def _genericAlgorithm(
-        fringe_class,
-        problem,
-        fringe_push=lambda fringe,
-        node: fringe.push(node),
-        test_goal_on_generated=True):
-    NODE_FIELD = 0
-    EXPANDED_FIELD = 1
+def _genericAlgorithm(fringe, problem, test_goal_on_generated=True):
     initial_node = node.Node(problem.getStartState())
-    fringe = fringe_class()
-    fringe_push(fringe, initial_node)
+    fringe.push(initial_node)
     generated = {problem.getStartState(): [initial_node, False]}
 
     while True:
@@ -122,7 +112,7 @@ def _genericAlgorithm(
 
         n = fringe.pop()
 
-        if generated[n.state][EXPANDED_FIELD]:
+        if generated[n.state][1]:
             continue
 
         if problem.isGoalState(n.state):
@@ -131,50 +121,30 @@ def _genericAlgorithm(
         generated[n.state] = [n, True]
 
         for (successor, action, stepCost) in problem.getSuccessors(n.state):
-            if successor in generated and \
-                    generated[successor][NODE_FIELD].cost > n.cost + stepCost:
-                continue
-
-            successor_node = node.Node(successor, n, action, n.cost + stepCost)
-            if test_goal_on_generated and \
-                    problem.isGoalState(successor_node.state):
-                return successor_node.path()
-            fringe_push(fringe, successor_node)
-
-            # state not in fringe -> state in generated
-            generated[successor_node.state] = [successor_node, False]
-
+            if successor not in generated or generated[successor][0].cost > n.cost + stepCost:
+                successor_node = node.Node(successor, n, action, n.cost + stepCost)
+                if test_goal_on_generated and problem.isGoalState(successor_node.state):
+                    return successor_node.path()
+                fringe.push(successor_node)
+                generated[successor_node.state] = [successor_node, False]  # state not in fringe --> state in generated
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    def fringe_push_function(fringe, node):
-        fringe.push(node, node.cost)
-
-    return _genericAlgorithm(
-            util.PriorityQueue,
-            problem,
-            fringe_push=fringe_push_function,
-            test_goal_on_generated=False
-    )
+    # As default heuristic is nullHeuristic that adds 0 to the cost, we can use it.
+    return aStarSearch(problem)
 
 
 def nullHeuristic(state, problem=None):
     """
-    A heuristic function estimates the cost from the current state to the
-    nearest goal in the provided SearchProblem.  This heuristic is trivial  """
+    A heuristic function estimates the cost from the current state to the nearest
+    goal in the provided SearchProblem.  This heuristic is trivial.
+    """
     return 0
 
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """
-    Search the node that has the lowest combined cost and heuristic first.
-    """
-    "*** YOUR CODE HERE ***"
-    def fringe_push_function(fringe, node):
-        fringe.push(node, node.cost + heuristic(node.state, problem))
-
-    return _genericAlgorithm(util.PriorityQueue, problem, fringe_push, False)
+    return _genericAlgorithm(util.PriorityQueueWithFunction(lambda node: node.cost + heuristic(node.state, problem)), problem, test_goal_on_generated=False)
 
 
 # Abbreviations
